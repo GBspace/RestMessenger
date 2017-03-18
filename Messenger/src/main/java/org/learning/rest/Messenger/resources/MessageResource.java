@@ -63,4 +63,12 @@ public class MessageResource {
 		msgService.removeMessage(id);
 	}
 	
+	//@GET   //Not the ideal way of doing it, as this class should also deal with Message,
+		   //so implement a sub resource that will delegate the work to some other resource
+		   //remvover GET as any request to this pattern should get redirected not just GET
+	@Path("/{messageId}/comments")
+	public CommentResource getCommentResource(){
+		return new CommentResource();
+	}
+	
 }

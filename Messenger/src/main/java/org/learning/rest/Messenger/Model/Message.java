@@ -1,8 +1,11 @@
 package org.learning.rest.Messenger.Model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public class Message {
@@ -10,18 +13,26 @@ public class Message {
 	private String message;
 	private Date createdOn;
 	private String author;
-	
+	private Map<Long,Comment> comments = new HashMap<>();
 	
 	public Message() {
 		
 	}
 	public Message(long id, String message, String author) {
-		super();
+		
 		this.id = id;
 		this.message = message;
 		this.createdOn = new Date();
 		this.author = author;
 	}
+	@XmlTransient   // to ignore when message instance is converted to xml/json
+	public Map<Long, Comment> getComments() {
+		return comments;
+	}
+	public void setComments(Map<Long, Comment> comments) {
+		this.comments = comments;
+	}
+	
 	public long getId() {
 		return id;
 	}
