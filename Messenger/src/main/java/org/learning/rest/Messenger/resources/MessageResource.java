@@ -2,6 +2,7 @@ package org.learning.rest.Messenger.resources;
 
 import java.util.List;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.learning.rest.Messenger.Model.Message;
+import org.learning.rest.Messenger.resources.beans.MessageFilterBean;
 import org.learning.rest.Messenger.service.MessageService;
 
 @Path("/messages")
@@ -23,15 +25,13 @@ public class MessageResource {
 	MessageService msgService = new MessageService();
 	
 	@GET
-	public List<Message> getMessages(@QueryParam("year") int year, 
-									 @QueryParam("start") int start,	
-									 @QueryParam("size") int size){
-		if(year > 0 ){
-			return msgService.getAllMessagesForYear(year);
+	public List<Message> getMessages(@BeanParam MessageFilterBean filterBean){
+		if(filterBean.getYear() > 0 ){
+			return msgService.getAllMessagesForYear(filterBean.getYear());
 		}
 		
-		if(start >= 0 && size > 0){
-			return msgService.getAllMessagesPaginated(start, size);
+		if(filterBean.getStart() >= 0 && filterBean.getSize() > 0){
+			return msgService.getAllMessagesPaginated(filterBean.getStart(), filterBean.getStart());
 		}
 		
 		return msgService.getAllMessages();
