@@ -1,6 +1,7 @@
 package org.learning.rest.Messenger.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,23 @@ public class MessageService {
 	public List<Message> getAllMessages(){
 		return new ArrayList<Message>(messages.values());
 	}
+	
+    public List<Message> getAllMessagesForYear(int year){
+    	List<Message> listMsg = new ArrayList<>();
+    	Calendar cal = Calendar.getInstance();
+    	for(Message msg : messages.values()){
+    		cal.setTime(msg.getCreatedOn());
+    		if(cal.get(Calendar.YEAR) == year){
+    			listMsg.add(msg);
+    		}
+    	}
+    	return listMsg;
+    }
+    
+    public List<Message> getAllMessagesPaginated(int start, int size){
+    	ArrayList<Message> listMsg = new ArrayList<Message>(messages.values()); 
+    	return listMsg.subList(start, start+size);	
+    }
 	
 	public Message getMessage(Long id){
 		return messages.get(id);
