@@ -7,7 +7,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.learning.rest.Messenger.Model.ErrorMessage;
 
-@Provider
+@Provider  //PRovider is used to register a class with exception
 public class GenericExceptionMapper implements ExceptionMapper<Throwable>{
 
 	@Override
