@@ -6,8 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Singleton;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.learning.rest.Messenger.Model.Comment;
+import org.learning.rest.Messenger.Model.ErrorMessage;
 import org.learning.rest.Messenger.Model.Message;
 import org.learning.rest.Messenger.database.databaseClass;
 
@@ -21,7 +26,19 @@ public class CommentService {
 	}
 	
 	public Comment getComment(Long messageId, Long commentId){
-		return messages.get(messageId).getComments().get(commentId);
+		ErrorMessage errMsg = new ErrorMessage("Not Found", 404, "https://ghummakads.wordpress.com/");
+		Response resp = Response.status(Status.NOT_FOUND).entity(errMsg).build();
+		Message msg = messages.get(messageId);
+		if(msg == null){
+			throw new WebApplicationException(resp);
+		}
+		
+		Map<Long, Comment> comments = msg.getComments();
+		Comment com = comments.get(commentId);
+		if(com == null){
+			throw new NotFoundException(resp);
+		}
+		return com;
 	}
 	
 	public Comment addComment(long messageId, Comment comment){
