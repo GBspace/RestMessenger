@@ -1,5 +1,7 @@
 package org.learning.rest.Messenger.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ws.rs.BeanParam;
@@ -12,7 +14,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.learning.rest.Messenger.Model.Message;
 import org.learning.rest.Messenger.resources.beans.MessageFilterBean;
@@ -45,8 +51,15 @@ public class MessageResource {
 	}
 	
 	@POST
-	public Message postMessage(Message message){
-		return msgService.addMessage(message);
+	public Response postMessage(Message message, @Context UriInfo uriInfo) throws URISyntaxException{
+		Message newmessage = msgService.addMessage(message);
+		String newId = String.valueOf(newmessage.getId());
+//		return Response.status(Status.CREATED)
+		URI newuri = uriInfo.getAbsolutePathBuilder().path(newId).build();
+		return Response.created(newuri)
+				.entity(newmessage)
+				.build();
+//		return msgService.addMessage(message);
 	}
 	
 	@PUT
