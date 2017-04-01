@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
+import org.learning.rest.Messenger.Exception.DataNotFoundException;
 import org.learning.rest.Messenger.Model.Message;
 import org.learning.rest.Messenger.database.databaseClass;
 
@@ -45,7 +46,11 @@ public class MessageService {
     }
 	
 	public Message getMessage(Long id){
-		return messages.get(id);
+		Message newMessage = messages.get(id);
+		if (newMessage == null){
+			throw new DataNotFoundException("Message with ID " + id + "not found");
+		}
+		return newMessage;
 	}
 	
 	public Message addMessage(Message message){
