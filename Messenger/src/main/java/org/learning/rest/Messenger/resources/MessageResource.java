@@ -26,7 +26,7 @@ import org.learning.rest.Messenger.service.MessageService;
 
 @Path("/messages")
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(value = {MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
 public class MessageResource {
 	MessageService msgService = new MessageService();
 	
@@ -46,8 +46,35 @@ public class MessageResource {
 	
 	@GET
 	@Path("/{messageId}")
-	public Message getMessageBasedOnID(@PathParam("messageId") long messageId){
-		return msgService.getMessage(messageId);
+	public Message getMessageBasedOnID(@PathParam("messageId") long messageId, @Context UriInfo uriInfo){
+		Message msg =  msgService.getMessage(messageId);
+		String uri = getUriForSelf(uriInfo, msg);
+		msg.addLink(uri, "self");
+		String profileUri = getUriForProfile(uriInfo, msg);
+		msg.addLink(profileUri , "profile");
+		String commentsUri = getUriForComments(uriInfo,msg);;
+		msg.addLink(commentsUri , "comments");
+		return msg;
+	}
+
+	private String getUriForComments(UriInfo uriInfo, Message msg) {
+		String uri = uriInfo.getBaseUriBuilder()
+					.path(MessageResource.class)
+					.path(MessageResource.class,"getCommentResource")
+					.path(CommentResource.class)
+					.resolveTemplate("messageId", msg.getId())
+					.build().toString();
+		return uri;
+	}
+
+	private String getUriForProfile(UriInfo uriInfo, Message msg) {
+		String uri = uriInfo.getBaseUriBuilder().path(ProfileResource.class).path(msg.getAuthor()).build().toString();
+		return uri;
+	}
+
+	private String getUriForSelf(UriInfo uriInfo, Message msg) {
+		String uri = uriInfo.getBaseUriBuilder().path(MessageResource.class).path(Long.toString(msg.getId())).build().toString();
+		return uri;
 	}
 	
 	@POST
